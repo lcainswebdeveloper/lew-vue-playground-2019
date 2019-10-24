@@ -2,7 +2,13 @@
   <div v-click-outside="reset" class="custom-dropdown-container mx-auto mt-10 p-4">
     <div class="p-1" @click="showOptions = true">{{ selectedOption.name || 'Please choose an option' }}</div>
     <div v-if="showOptions">
-      <input @keydown.enter.prevent="selectOptionFromInput()" @keydown.tab.prevent="selectNext" v-model="filter" class="search-filter">
+      <input
+        @keydown.down="selectNext()"
+        @keydown.up="selectPrevious()"
+        @keydown.enter.prevent="selectOptionFromInput()"
+        @keydown.tab.prevent="selectNext"
+        v-model="filter"
+        class="search-filter">
       <ul>
         <li :class="optionColours(option, i)" @click="selectOption(option)" :key="`dropdown-option-${option.id}`" v-for="(option, i) in filteredOptions">
           {{ option.name }}
@@ -48,7 +54,13 @@ export default {
       } else {
         this.tabIndex = 1;
       }
-      console.log('next');
+    },
+    selectPrevious() {
+      if (this.tabIndex > 1) {
+        this.tabIndex -= 1;
+      } else {
+        this.tabIndex = this.filteredOptions.length;
+      }
     },
     reset() {
       // this.selectedOption = {};

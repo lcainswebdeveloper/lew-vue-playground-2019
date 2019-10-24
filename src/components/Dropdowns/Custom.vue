@@ -2,9 +2,9 @@
   <div v-click-outside="reset" class="custom-dropdown-container mx-auto mt-10 p-4">
     <div class="p-1" @click="showOptions = true">{{ selectedOption.name || 'Please choose an option' }}</div>
     <div v-if="showOptions">
-      <input v-model="filter" class="search-filter">
+      <input @keydown.enter.prevent="selectOptionFromInput()" @keydown.tab.prevent="selectNext" v-model="filter" class="search-filter">
       <ul>
-        <li :class="{'bg-green text-white': selectedOption.name === option.name}" @click="selectOption(option)" :key="`dropdown-option-${option.id}`" v-for="option in filteredOptions">
+        <li :class="optionColours(option, i)" @click="selectOption(option)" :key="`dropdown-option-${option.id}`" v-for="(option, i) in filteredOptions">
           {{ option.name }}
         </li>
       </ul>
@@ -29,10 +29,32 @@ export default {
     ClickOutside,
   },
   methods: {
+    selectOptionFromInput() {
+      const check = this.filteredOptions[(this.tabIndex - 1)];
+      if (check) {
+        this.selectOption(this.filteredOptions[(this.tabIndex - 1)]);
+      }
+    },
+    optionColours(option, key) {
+      console.log(`(key ${key} === (this.tabIndex (${this.tabIndex - 1})) && this.tabIndex !== 0)`);
+      return {
+        'bg-green text-white': this.selectedOption.name === option.name,
+        'bg-grey text-white': (key === (this.tabIndex - 1) && this.tabIndex !== 0),
+      };
+    },
+    selectNext() {
+      if (this.tabIndex < this.filteredOptions.length) {
+        this.tabIndex += 1;
+      } else {
+        this.tabIndex = 1;
+      }
+      console.log('next');
+    },
     reset() {
       // this.selectedOption = {};
       this.filter = '';
       this.showOptions = false;
+      this.tabIndex = 0;
     },
     selectOption(option) {
       this.selectedOption = option;
@@ -41,6 +63,7 @@ export default {
   },
   data() {
     return {
+      tabIndex: 0,
       filter: '',
       selectedOption: {},
       showOptions: false,

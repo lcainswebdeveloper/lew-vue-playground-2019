@@ -42,7 +42,6 @@ export default {
       }
     },
     optionColours(option, key) {
-      console.log(`(key ${key} === (this.tabIndex (${this.tabIndex - 1})) && this.tabIndex !== 0)`);
       return {
         'bg-green text-white': this.selectedOption.name === option.name,
         'bg-grey text-white': (key === (this.tabIndex - 1) && this.tabIndex !== 0),
